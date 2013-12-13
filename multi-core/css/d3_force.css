@@ -1,0 +1,77 @@
+
+.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+#M0 {
+  fill:  #607EB2;
+}
+
+
+#M1 {
+  fill: #A95ED1;
+}
+
+#M2 {
+  fill:#569342;
+}
+
+#M3 {
+  fill: #CC4C45;
+}
+
+#M4 {
+  fill: #607EB2;
+}
+#M5 {
+  fill: #A97728;
+}
+#M6 {
+  fill: #BE5290;
+}
+.link.M0 {
+  stroke:#607EB2;
+}
+.link.M1 {
+  stroke: #A95ED1;
+}
+
+.link.M2 {
+  stroke: #569342;
+}
+
+.link.M3 {
+  stroke: #CC4C45;
+}
+
+.link.M4 {
+  stroke: #607EB2;
+}
+.link.M5 {
+  stroke:#A97728;
+}
+.link.M6 {
+  stroke:#BE5290;
+}
+
+
+
+.link.resolved {
+  stroke-dasharray: 0,2 1;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+ color: white;
+  fill:white;
+  pointer-events: none;
+ // text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
