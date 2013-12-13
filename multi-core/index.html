@@ -1,0 +1,607 @@
+<s!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>reveal.js - The HTML Presentation Framework</title>
+
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">
+    <link rel="stylesheet" href="http://www.cip.ifi.lmu.de/~nickel/iswc2012-slides/css/viz.css">
+    <link rel="stylesheet" href="http://www.cip.ifi.lmu.de/~nickel/iswc2012-slides/css/math.css">
+    <link rel="stylesheet" href="http://www.cip.ifi.lmu.de/~nickel/iswc2012-slides/css/reveal-console.css" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    <!-- If the query includes 'print-pdf', use the PDF print sheet-->
+    <script>
+      document.write( '<link rel="stylesheet" href="css/print/' + (
+      window.location.search.match(/print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+
+    <script type='text/javascript' src='http://sdqali.in/visualizations/d3-workshop/js/d3.v2.min.js'></script>
+    <script src="http://sdqali.in/visualizations/d3-workshop/js/barchart.js"></script>
+    <script src="http://www.mas.ncl.ac.uk/~ncsg3/chart0.js"></script>
+    <script src="http://www.mas.ncl.ac.uk/~ncsg3/chart1.js"></script>
+    <script src="http://www.mas.ncl.ac.uk/~ncsg3/chart2.js"></script>
+    <script src="http://www.mas.ncl.ac.uk/~ncsg3/chart3.js"></script>
+    <script src="http://www.mas.ncl.ac.uk/~ncsg3/chart4.js"></script>
+
+  </head>
+  <script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			"HTML-CSS": {
+				scale: 85,
+				showMathMenu: false,
+				mtextFontInherit: true,
+				preferredFont: "TeX",
+				styles: {
+					".MathJax_Display": {
+						margin: "0.75em 0em"
+					}
+				}
+			},
+			"SVG": {mtextFontInherit: true, scale: 95, showMathMenu: false},
+  			jax: ["input/TeX","output/HTML-CSS"],
+			tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+  			extensions: ["tex2jax.js"],
+  			TeX: {
+    			//extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+    			extensions: ["AMSmath.js","AMSsymbols.js"]
+			}
+		});
+  </script>
+
+        <style>
+
+.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+#M0 {
+  fill:  #607EB2;
+}
+
+
+#M1 {
+  fill: #A95ED1;
+}
+
+#M2 {
+  fill:#569342;
+}
+
+#M3 {
+  fill: #CC4C45;
+}
+
+#M4 {
+  fill: #607EB2;
+}
+#M5 {
+  fill: #A97728;
+}
+#M6 {
+  fill: #BE5290;
+}
+.link.M0 {
+  stroke:#607EB2;
+}
+.link.M1 {
+  stroke: #A95ED1;
+}
+
+.link.M2 {
+  stroke: #569342;
+}
+
+.link.M3 {
+  stroke: #CC4C45;
+}
+
+.link.M4 {
+  stroke: #607EB2;
+}
+.link.M5 {
+  stroke:#A97728;
+}
+.link.M6 {
+  stroke:#BE5290;
+}
+
+
+
+.link.resolved {
+  stroke-dasharray: 0,2 1;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+ color: white;
+  fill:white;
+  pointer-events: none;
+ // text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
+
+
+</style>
+	<body>
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h3> Stochastic simulation of chemically
+					reacting systems using multi-core
+					CPUs</h3>
+<div id="star"></div>
+<script type='text/javascript'>
+heatshock_front();
+star_front();
+
+ </script>
+					<p>
+				 <a href="http://www.mas.ncl.ac.uk/~ncsg3/">Colin
+				 Gillespie</a>
+					</p>
+<p><small><a href="www.ncl.ac.uk/maths/">Newcastle University</a></small></p>
+				</section>
+
+<section data-markdown>
+    <script type="text/template">
+## Overview
+
+
+ - Stochastic kinetic models
+ - Issues with the Direct method
+ - Multi-core method
+  - Species update
+  - Time steps
+ -  Examples
+ 
+    </script>
+</section>
+
+<section>
+<section>
+
+<h2>Stochastic kinetic models</h2>
+
+<ul>
+<li>A biochemical network is represented as a set of pseudo-biochemical reactions ($u$ species & $v$ reactions)
+
+$$
+R_i: p_{11}\mathcal{X}_1+\cdots+p_{1u}\mathcal{X}_u  
+\xrightarrow{c_i}
+q_{11}\mathcal{X}_1+\cdots+q_{1u}\mathcal{X}_u
+$$
+</li>
+<li>Stochastic rate constant $c_i$</li>
+<li>Hazard/instantaneous rate: $h_i(X_t, c_i)$ where $X_t$ is the current state of the system</li>
+</ul>
+ 
+</section>
+
+
+<section>
+<h2>Stochastic kinetic models</h2>
+
+<ul>
+<li>Describe the SKM by a Markov jump process (MJP)</li>
+<li>The effect of reaction $R_k$ is to change the value of each species $X_i$ by
+$q_{ji} - p_{ji}$</li>
+<li>The stoichiometry matrix $S$ has elements $s_{ij} = q_{ji} - p_{ji}$</li>
+<li>It can be shown that the time to the next reaction is
+$$
+t \sim Exp(h_0 (X_t , c)) \quad\text{where}\quad h_0(X_t , c) =\sum_{i=1}^v h_i(X_i, c_i)
+$$
+and the reaction is of type $i$ with probability $h_i(X_t, c_i)/h_0(X_t , c)$</li>
+<li>The process is easily simulated using the direct method (<b>Gillespie
+  algorithm</b>)</li>
+</ul>
+</section>
+
+<section>
+<h2>The direct method</h2>
+<ol>
+<li><b>Initialisation</b></li>
+<li><b>Propensities update:</b> Update each of the $v$ hazard functions, $h_i(x)$</li>
+<li><b>Propensities total:</b> Calculate the total hazard $h_0 = \sum_{i=1}^v h_i(x)$</li>
+<li><b>Reaction time:</b> $\tau = -\ln[U(0,1)]/h_0$ and $t = t+ \tau$</li>
+<li><b>Reaction selection:</b> A reaction is chosen proportional to its
+  hazard</li>
+<li><b>Reaction execution:</b> Update species</li>
+<li><b>Iteration:</b> If the simulation time is exceeded stop, otherwise go back to step 2</li>
+</ol>
+<blockquote>
+Typically there are a large number of iterates
+</blockquote>
+</section>
+
+<section data-markdown>
+    <script type="text/template">
+## Approximations
+
+Relax assumptions to make simulation faster and *more* scalable
+
+ * ODE
+ * Linear noise approximation (LNA) / moment closure (2MA)
+ * Diffusion approximation / chemical Langevin equation (CLE)
+ * Hybrid discrete-continuous models
+  * Split models into smaller sub-models based on fast and slow reactions
+</script>
+</section>
+</section>
+
+<section>
+
+<section data-markdown>
+    <script type="text/template">
+## Proposed approach
+
+ * **Separate** the system into a few loosely coupled sub-models
+ * Each processor will then simulate the sub-models independently
+   * The key to this approach is to choose a set of sub-models that have limited communication with other sub-models.
+ * Each sub-model is simulated using any simulator
+</script>
+</section>
+
+<section>
+<h2>MIDIA algorithm (Bowsher, 2011)</h2>
+
+<ol>
+<li><b>KIG construction:</b> construct a kinetic independence graph (KIG)
+<ul><li>Graph nodes are biochemical species</li></ul></li>
+<li class="fragment"><b>Clique/sub-model modularisation:</b> partition the model $M$ into its basic
+  cliques/sub-models
+<ul><li>Typically cliques are too small of simulation purposes</li></ul></li>
+<li class="fragment"><b>Clique aggregation:</b> on the junction tree, perform
+pairwise aggregation of selected modules</li>
+</ol>
+
+</section>
+
+<section data-markdown>
+    <script type="text/template">
+## Example: Chaperone heat shock model
+
+ * Interplay between damaged proteins and
+available free chaperones 
+  * Affect on cellular ageing
+ * Fifteen species
+ * Twenty-three reactions
+ * Key species: $\mathtt{Hsp90}$ and $\mathtt{ADP}$
+</script>
+</section>
+
+
+
+
+
+<section data-state="heatshock">
+<h2>Heat shock model</h2>
+
+
+<div class="column" style="width: 50%;">
+<img src="http://www.mas.ncl.ac.uk/~ncsg3/fig1.png" alt="Unicorn">
+</div>
+
+<div class="column" style="width: 45%; vertical-align: top;">
+<div id="heatshock_tmp"></div>
+
+</div>
+
+</section>
+
+<section data-state="heatshock_midia" >
+<h2>Sub-models</h2>
+
+<div class="column" style="width: 45%; vertical-align: top; font-size: .7em;">
+<ul>
+<li>Three sub-models:<ul>
+<li>$\mathcal{M_1}:$ 7 species & 9 reactions</li>
+<li>$\mathcal{M_2}:$ 6 species & 7 reactions</li>
+<li>$\mathcal{M_3}:$ 5 species & 7 reactions</li></ul>
+<li>Separator species ($\mathcal{S}$):<ul>
+<li>$\mathtt{Hsp90}:$ $\mathcal{M_1}$ & $\mathcal{M_2}$</li>
+<li>$\mathtt{MisP}:$ $\mathcal{M_2}$ & $\mathcal{M_3}$</li>
+<li>$\mathtt{NatP}:$ $\mathcal{M_2}$ & $\mathcal{M_3}$</li>
+</ul>
+</ul>
+</div>
+<div class="column" style="width: 50%;">
+<div id="heatshock_midia_tmp"></div>
+
+
+</section>
+
+
+<section data-markdown>
+    <script type="text/template">
+## Exact parallel scheme
+
+1. Initialise
+1. **while** $t < \mathtt{maxtime}$
+1. $\quad$ *#Parallel step*
+1. $\quad$ **for** each sub-model $\mathcal{M}_i$
+1. $\qquad$ Simulate $\mathcal{M}_i$ until $\mathcal{S}$ changes
+1. $\quad$ **end for**
+1. $\quad$ Rewind sub-models to time of first $\mathcal{S}$ change
+1. $\quad$ Propagate changes to the other sub-models
+1. **end while**
+</script>
+</section>
+
+
+<section data-markdown>
+    <script type="text/template">
+## Exact parallel scheme
+> Only suitable for if the separator species change
+infrequently
+
+* All threads must be synchronised, then each sub-model 'rewound'
+  * **Storage issues**
+* The change in the separator species must be propagated throughout the
+  sub-models
+* The threads must then be restarted
+</script>
+</section>
+
+<section>
+<h2>Approximate parallel scheme</h2>
+
+<ol>
+<li> Initialise</li>
+<li > <b>while</b> $t < \mathtt{maxtime}$</li>
+<li> $\quad$ Calculate $\triangle t$</li>
+<li> $\quad$ <b>for</b> each sub-model $\mathcal{M}_i$</li>
+<li> $\qquad$ <i># Using SSA, or a hybrid simulator, or a SDE</i></li>
+<li> $\qquad$ Simulate for $\triangle t$ </li>
+<li> $\quad$ <b>end for</b></li>
+<li> $\quad$ Combine separator species </li>
+<li> $\quad$ Propagate changes to the sub-models </li>
+<li> $\quad$ Update global time: $t := t + \triangle t$</li>
+<li> <b>end while</b></li>
+</ol>
+
+</section>
+
+<section data-markdown>
+    <script type="text/template">
+## Combining separator species
+
+Averaging $\mathcal{S}$ across models is bad idea. For example, $\mathtt{Hsp90}$
+
+ * is constant in $\mathcal{M}_1$
+ * is rapidly changing $\mathcal{M}_2$
+</script>
+</section>
+
+
+<section>
+<h2>Combining separator species</h2>
+
+<ul>
+<li>Calculate the change in Separator species:
+
+$$
+\begin{equation}
+  \mathcal{S}_{i,j}(t + \triangle t) = \mathcal{S}_{i,j}(t) + \sum_{k \in m_i}[
+  \mathcal{S}_{i,k}(t+\triangle t) -
+  \mathcal{S}_{i,k}(t)] 
+\end{equation}
+$$
+where 
+<ul>
+<li>$m_i$ are sub-models that contain a particular separator species</li>
+<li> $\mathcal{S}_{i,j}(\tau)$ is the population of the separator species $i$, at time
+$\tau$, in sub-model $\mathcal{M}_j$</li>
+<li class="fragment"> This step synchronises species
+\[
+\mathcal{S}_{i,j}(t) = \mathcal{S}_{i,k}(t) 
+\]
+and
+\[
+\mathcal{S}_{i,j}(t + \triangle t) = \mathcal{S}_{i,k}(t + \triangle t) 
+\] 
+</li>
+</ul></li></ul>
+
+</script>
+</section>
+
+<section>
+<h2>Species update</h2>
+
+<ul>
+<li>Intuitively, we want slowly changing separator species</li>
+<li> Suppose a step of $\triangle t$, will result in state change $\lambda$, then we want
+
+$$
+\vert h_j(\mathbf{x} + \mathbf{\lambda} )- h_j(\mathbf{x}) \vert 
+$$
+
+</li>
+<li>This is similar to the $\tau$-leap algorithm</li>
+</ul>
+
+</section>
+
+
+ <section>
+<h2>Adaptive time step (intuition)</h2>
+
+
+$$
+  \triangle t_k  
+  = \min_{i \in K_{sp}} \left\{ \frac{\max(\epsilon x_i/g_i(\mathbf{x}),
+      1)}{|\mu_j|}, \frac{\max(\epsilon x_i/g_i(\mathbf{x}),
+      1)^2}{|\sigma_i^2|}\right\} \;.
+$$
+<ul>
+<li>$g_i(\cdot)$ adjusts for higher-order reactions</li>
+<li> $\epsilon$ is the tuning parameter</li>
+<li> $\mu_j$ mean species level</li>
+<li> $\sigma_j$ species variance </li>
+</ul>
+
+</section>
+
+
+<section>
+<h2>Results (Heat shock)</h2>
+
+<img src="http://www.mas.ncl.ac.uk/~ncsg3/fig2.png" alt="Unicorn">
+</section>
+</section>
+
+<section>
+
+<section data-state="star1">
+<h2>Gene regulation network</h2>
+
+<div class="column" style="width: 50%; vertical-align: top; font-size: .7em;">
+<ul>
+<li>Large model, that contains $k+1$ sub-models
+<li>In sub-model $\mathcal{M}_k$, we have, <i>inter alia</i>,
+<ul>
+<li>$\mathtt{Gene}_k$, $\mathtt{Protein}_k$, $\mathtt{mRNA}_k$</li>
+</ul>
+<li> When $\mathtt{Protein}_1$ binds to $\mathtt{Gene}_k$, the production of
+  $\mathtt{Protein}_k$ changes
+</ul>
+<img src="http://www.mas.ncl.ac.uk/~ncsg3/fig3.png" alt="Unicorn">
+</div>
+
+<div class="column" style="width: 45%; vertical-align: top;">
+<h4><em>$k=6$ sub-models</em></h4>
+
+<div id="star1_tmp"></div>
+</div>
+
+
+</section>
+</section>
+
+
+<section>
+
+<section>
+<h2> Gene regulation network (accuracy)</h2>
+<img src="http://www.mas.ncl.ac.uk/~ncsg3/fig4.png" alt="Unicorn">
+
+
+</section>
+
+
+<section>
+<h2> Gene regulation network (speed)</h2>
+<img src="http://www.mas.ncl.ac.uk/~ncsg3/fig5.png" alt="Unicorn">
+</section>
+
+</section>
+
+
+
+<section>
+<h2>Summary</h2>
+
+<ul>
+<li>Many stochastic simulation algorithms are inherently serial
+<li>First attempt at leveraging multi-cpus
+<li>For very large models, GPUs could be possible
+<li>Inference
+</ul>
+<a href="http://github.com/csgillespie/talks/">http://github.com/csgillespie/talks/</a>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+     				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'concave', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async:
+				true, condition: function() { return
+				!!document.body.classList; } },
+  
+
+        { src: 'plugin/math/math.js', async: true }
+				]
+			});
+                        Reveal.addEventListener( 'star1', function( ) {
+                        if (!document.getElementById("star1")) {
+                        document.getElementById("star1_tmp").setAttribute("id", "star1");
+                        star1();
+                        }
+                        },false );
+
+                      Reveal.addEventListener( 'heatshock', function( ) {
+                        if (!document.getElementById("heatshock")) {
+                        document.getElementById("heatshock_tmp").setAttribute("id", "heatshock");
+                        heatshock();
+                        }
+                        },false );
+
+
+                        Reveal.addEventListener( 'heatshock_midia', function( ) {
+                        if (!document.getElementById("heatshock_midia")) {
+                        document.getElementById("heatshock_midia_tmp").setAttribute("id", "heatshock_midia");
+                        heatshock_midia();
+                        }
+                        },false );
+
+		</script>
+
+	</body>
+</html>
