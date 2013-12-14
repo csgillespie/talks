@@ -28,10 +28,10 @@
     <script type='text/javascript' src="js/chart1.js"></script>
     <script type='text/javascript' src="js/chart2.js"></script>
     <script type='text/javascript' src="js/chart3.js"></script>
-
+    
   </head>
   <script type="text/x-mathjax-config">
-		MathJax.Hub.Config({
+    MathJax.Hub.Config({
 			"HTML-CSS": {
 				scale: 85,
 				showMathMenu: false,
@@ -57,6 +57,34 @@
   <body>
     <div class="reveal">
       <div class="slides">
+
+        <section style="font-size:85%">
+          <h2>ES31: Stochastic systems biology</h2>
+
+          <ul>
+            <li><b>Colin Gillespie</b>
+              <ul><li>Stochastic simulation of chemically reacting systems using multi-core CPUs</li></ul>
+            </li>
+            <li><b>Chris Barnes</b>
+              <ul><li> A method for exploring the structural robustness of
+                  stochastic biological networks</li></ul>
+            </li>
+            <li><b>Heniz Koeppl</b>
+              <ul><li>Statistical inference of cellular behavior from
+                  heterogeneous single-cell data</li></ul>
+            </li>
+            <li><b>Theo Kypraios</b>
+              <ul><li>Fast approximate Bayesian computation for discretely
+                  observed Markov models using a factorised posterior
+                  distribution</li></ul>
+            </li>
+            <li><b>Chris Sherlock</b>
+              <ul><li>The delayed-acceptance particle marginal random walk
+                  Metropolis</li></ul>
+            </li>
+          </ul>
+        </section>
+
         <section>
 	  <h3>Stochastic simulation of chemically reacting systems using multi-core CPUs</h3>
           
@@ -304,14 +332,17 @@
           <section>
             <h2>Combining separator species</h2>
               
-            <p align="left">Averaging the separator species, $\mathcal{S}$, across models is bad idea</p>
+            <div align="left">
+              <p>Averaging the separator species, $\mathcal{S}$, across models
+              is a <em>bad</em> idea</p>
 
-            <p align="left"> For example, $\mathtt{Hsp90}$</p>
+              <p> For example, $\mathtt{Hsp90}$</p>
 
-            <ul>
-              <li>is approximately constant in $\mathcal{M}_1$</li>
-              <li>is rapidly changing $\mathcal{M}_2$</li>
-            </ul>
+              <ul style="margin-left: 3em;">
+                <li>is approximately constant in $\mathcal{M}_1$</li>
+                <li>is rapidly changing $\mathcal{M}_2$</li>
+              </ul>
+            </div>
      
           </section>
           
@@ -347,12 +378,18 @@
           </section>
 
           <section>
-            <h2>Species update</h2>
+            <h2>Time step $\triangle t$</h2>
             
             <ul>
-              <li style="padding-top: 1em;">Intuitively, we want slowly changing separator species</li>
-              <li style="padding-top: 1em;padding-bottom: 1em;">Suppose a step
-                of $\triangle t$ results in state change $\lambda$
+              <li style="padding-top: 1em;">Choosing $\triangle t$ is a
+                compromise
+                <ul>
+                  <li>Too large would induce error</li>
+                  <li>Too small would be slow</li>
+                </ul>
+              <li>Intuitively $\mathcal{S}$ shouldn't change much during $(t,
+              t+\triangle t)$</li>
+              <li class="fragment" >Suppose a step of $\triangle t$ results in state change $\lambda$
                 <ul>
                   <li>Then we want
                     
@@ -361,10 +398,10 @@
                     $$
                     
                     to be small, i.e. a small change in hazards
-                </li>
+                  </li>
+                  <li>This is similar to the $\tau$-leap algorithm</li>
                 </ul>
               </li>
-              <li>This is similar to the $\tau$-leap algorithm</li>
             </ul>
             
           </section>
@@ -373,19 +410,25 @@
           <section>
             <h2>Adaptive time step (intuition)</h2>
             
+            <div align="left">
+              For sub-model $\mathcal{M}_k$,
             $$
-            \triangle t_k  
-            = \min_{i \in K_{sp}} \left\{ \frac{\max(\epsilon x_i/g_i(\mathbf{x}),
+              \triangle t_k  
+              = \min_{i \in K_{sp}} \left\{ \frac{\max(\epsilon x_i/g_i(\mathbf{x}),
             1)}{|\mu_j|}, \frac{\max(\epsilon x_i/g_i(\mathbf{x}),
             1)^2}{|\sigma_i^2|}\right\} \;.
             $$
-            <ul>
+            <ul style="margin-left: 3em;">
               <li>$g_i(\cdot)$ adjusts for higher-order reactions</li>
               <li> $\epsilon$ is the tuning parameter</li>
               <li> $\mu_j$ mean hazard level</li>
               <li> $\sigma_j$ hazard variance </li>
             </ul>
-            
+            <p>The overall timestep is<p>
+            $$
+            \triangle t = \min(\triangle_1,\triangle t_2, \ldots, \triangle t_m)
+            $$
+            </div>
           </section>
           
           <section>
@@ -449,7 +492,7 @@
           <ul>
             <li>Many stochastic simulation algorithms are inherently serial</li>
             <li>First attempt at using multiple CPUs to speed up a single
-            stochastic simulation</li
+            stochastic simulation</li>
             <li>For very large models it could be possible to use GPUs</li>
             <li>Inference</li>
           </ul>
@@ -511,6 +554,7 @@
         { src: 'plugin/math/math.js', async: true }
 	]
 	});
+
         Reveal.addEventListener( 'star', function( ) {
         if (!document.getElementById("star")) {
         document.getElementById("star_tmp").setAttribute("id", "star");
