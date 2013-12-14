@@ -60,9 +60,9 @@ links.forEach(function(link) {
   link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
   link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
 });
-
-var width = 480,
-    height = 500;
+// 960, 700
+var width = 400,
+    height = 400;
 
 var force = d3.layout.force()
     .nodes(d3.values(nodes))
@@ -73,7 +73,7 @@ var force = d3.layout.force()
     .on("tick", tick)
     .start();
 
-var svg = d3.select("#star").append("svg")
+var svg = d3.select("#heatshock_front").append("svg")
     .attr("width", width)
     .attr("height", height);
 
@@ -190,8 +190,8 @@ links.forEach(function(link) {
   link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
 });
 
-var width = 480,
-    height = 500;
+var width = 700,
+    height = 400;
 
 var force = d3.layout.force()
     .nodes(d3.values(nodes))
@@ -202,7 +202,7 @@ var force = d3.layout.force()
     .on("tick", tick)
     .start();
 
-var svg = d3.select("#star").append("svg")
+var svg = d3.select("#star_front").append("svg")
     .attr("width", width)
     .attr("height", height);
 
