@@ -2,54 +2,54 @@ function heatshock() {
 
 // http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
 var links = [
-  {source: "Hsp90", target: "HCom", type: "M0"},
-  {source: "HSF1", target: "HCom", type: "M0"},
-  {source: "MisP", target: "MCom", type: "M0"},
-  {source: "Hsp90", target: "MCom", type: "M0"},
-  {source: "Sink", target: "NatP", type: "M0"},
+  {source: "Hsp90", target: "HCom", type: "M11"},
+  {source: "HSF1", target: "HCom", type: "M11"},
+  {source: "MisP", target: "MCom", type: "M21"},
+  {source: "Hsp90", target: "MCom", type: "M21"},
+  {source: "Sink", target: "NatP", type: "M31"},
 
-  {source: "HCom", target: "Hsp90", type: "M0"},
-  {source: "HCom", target: "HSF1", type: "M0"},
-  {source: "MCom", target: "MisP", type: "M0"},
-  {source: "MCom", target: "Hsp90", type: "M0"},
-  {source: "NatP", target: "MisP", type: "M0"},
-  {source: "NatP", target: "ROS", type: "M0"},
+  {source: "HCom", target: "Hsp90", type: "M11"},
+  {source: "HCom", target: "HSF1", type: "M11"},
+  {source: "MCom", target: "MisP", type: "M21"},
+  {source: "MCom", target: "Hsp90", type: "M21"},
+  {source: "NatP", target: "MisP", type: "M31"},
+  {source: "NatP", target: "ROS", type: "M31"},
 
-  {source: "HSF1", target: "DiH", type: "M0"},
-  {source: "MCom", target: "Hsp90", type: "M0"},
-  {source: "MCom", target: "NatP", type: "M0"},
-  {source: "MCom", target: "ADP", type: "M0"},
-  {source: "ATP", target: "Hsp90", type: "M0"},
-  {source: "ATP", target: "NatP", type: "M0"},
-  {source: "ATP", target: "ADP", type: "M0"},
-  {source: "MisP", target: "AggP", type: "M0"},
+  {source: "HSF1", target: "DiH", type: "M11"},
+  {source: "MCom", target: "Hsp90", type: "M21"},
+  {source: "MCom", target: "NatP", type: "M21"},
+  {source: "MCom", target: "ADP", type: "M21"},
+  {source: "ATP", target: "Hsp90", type: "M21"},
+  {source: "ATP", target: "NatP", type: "M21"},
+  {source: "ATP", target: "ADP", type: "M21"},
+  {source: "MisP", target: "AggP", type: "M31"},
 
-  {source: "HSF1", target: "TriH", type: "M0"},
-  {source: "DiH", target: "TriH", type: "M0"},
-  {source: "MisP", target: "ADP", type: "M0"},
-  {source: "ATP", target: "ADP", type: "M0"},
-  {source: "MisP", target: "AggP", type: "M0"},
-
-
-  {source: "HSETriH", target: "Hsp90", type: "M0"},
-  {source: "Hsp90", target: "ADP", type: "M0"},
-  {source: "ATP", target: "ADP", type: "M0"},
-  {source: "Sink", target: "ROS", type: "M0"},
-
-  {source: "TriH", target: "DiH", type: "M0"},
-  {source: "TriH", target: "HSF1", type: "M0"},
-  {source: "ADP", target: "ATP", type: "M0"},
-  {source: "ROS", target: "Sink", type: "M0"},
-
-  {source: "DiH", target: "HSF1", type: "M0"},
-  {source: "ATP", target: "ADP", type: "M0"},
-  {source: "Sink", target: "X", type: "M0"},
+  {source: "HSF1", target: "TriH", type: "M11"},
+  {source: "DiH", target: "TriH", type: "M11"},
+  {source: "MisP", target: "ADP", type: "M21"},
+  {source: "ATP", target: "ADP", type: "M21"},
+  {source: "MisP", target: "AggP", type: "M31"},
 
 
-  {source: "TriH", target: "HSETriH", type: "M0"},
-  {source: "HSD", target: "HSETriH", type: "M0"},
-  {source: "HSETriH", target: "HSE", type: "M0"},
-  {source: "HSETriH", target: "TriH", type: "M0"},
+  {source: "HSETriH", target: "Hsp90", type: "M11"},
+  {source: "Hsp90", target: "ADP", type: "M21"},
+  {source: "ATP", target: "ADP", type: "M21"},
+  {source: "Sink", target: "ROS", type: "M31"},
+
+  {source: "TriH", target: "DiH", type: "M11"},
+  {source: "TriH", target: "HSF1", type: "M11"},
+  {source: "ADP", target: "ATP", type: "M21"},
+  {source: "ROS", target: "Sink", type: "M31"},
+
+  {source: "DiH", target: "HSF1", type: "M11"},
+  {source: "ATP", target: "ADP", type: "M21"},
+  {source: "Sink", target: "X", type: "M31"},
+
+
+  {source: "TriH", target: "HSETriH", type: "M11"},
+  {source: "HSD", target: "HSETriH", type: "M11"},
+  {source: "HSETriH", target: "HSE", type: "M11"},
+  {source: "HSETriH", target: "TriH", type: "M11"},
 
 ];
 
@@ -79,7 +79,7 @@ var svg = d3.select("#heatshock").append("svg")
 
 // Per-type markers, as they don't inherit styles.
 svg.append("defs").selectAll("marker")
-    .data(["M0"])
+    .data(["M11", "M21", "M31"])
   .enter().append("marker")
     .attr("id", function(d) { return d; })
     .attr("viewBox", "0 -5 10 10")

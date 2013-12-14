@@ -5,10 +5,13 @@
   stroke-width: 1.5px;
 }
 
-#M0 {
+#M11, #M21, #M31 {
   fill:  #607EB2;
 }
 
+.link.M11, .link.M21, .link.M31{
+    stroke: #607EB2;
+}
 
 #M1 {
   fill: #A95ED1;
@@ -31,9 +34,7 @@
 #M6 {
   fill: #BE5290;
 }
-.link.M0 {
-  stroke:#607EB2;
-}
+
 .link.M1 {
   stroke: #A95ED1;
 }
