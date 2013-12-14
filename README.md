@@ -7,4 +7,7 @@ Talks and seminars
 
  * An overview of the tau-leap algorithm ([repo](https://github.com/csgillespie/talks/tree/master/tau-leap), 
  [slides](https://github.com/csgillespie/talks/blob/master/tau-leap/lecture.pdf?raw=true))
+ 
+ * Stochastic simulation of chemically reacting systems using multi-core CPUs ([repo](https://github.com/csgillespie/talks/tree/master/multi-core), 
+ [slides](http://www.mas.ncl.ac.uk/~ncsg3/html5talks/multicore))
 
