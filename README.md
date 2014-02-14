@@ -14,5 +14,5 @@ Talks and seminars
 
 ### R
 
-  * Object oriented programming with R (S3 classes) ([repo](https://github.com/csgillespie/talks/tree/master/s3-classes), 
- [slides](https://github.com/csgillespie/talks/blob/master/s3-classes/talk.pdf?raw=true))
+  * Object oriented programming with R (S3 classes) ([repo](https://github.com/csgillespie/talks/tree/master/S3-classes), 
+ [slides](https://github.com/csgillespie/talks/blob/master/S3-classes/talk.pdf?raw=true))
