@@ -1,0 +1,479 @@
+\documentclass[compress,t]{beamer}
+%\documentclass[handout]{beamer}
+\usepackage{pgfpages, printingslides, booktabs}
+% \pgfpagesuselayout{4 on 1}[a4paper,border shrink=5mm, landscape]
+\usepackage{algorithm}
+\usetheme{Madrid}
+\pagestyle{empty}
+\setcounter{section}{0}
+\newcommand{\cc}{\texttt}
+
+\RequirePackage[osf,sc]{mathpazo}{}
+\RequirePackage[scaled=0.90]{helvet}{}
+\RequirePackage[scaled=0.85]{beramono}{}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{textcomp}
+
+\graphicspath{{knitr_graphics/}, {../graphics/}}
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+options(replace.assign=FALSE,width=50)
+
+opts_chunk$set(fig.path='knitr_figure/graphics-', 
+               cache.path='knitr_cache/graphics-', 
+               fig.align='center', 
+               dev='pdf', fig.width=5, fig.height=5, 
+               fig.show='hold', cache=FALSE, par=TRUE, prompt=TRUE)
+knit_hooks$set(crop=hook_pdfcrop)
+
+knit_hooks$set(par=function(before, options, envir){
+    if (before && options$fig.show!='none') {
+        par(mar=c(3,3,2,1),cex.lab=.95,cex.axis=.9,
+            mgp=c(2,.7,0),tcl=-.01, las=1)
+}}, crop=hook_pdfcrop)
+
+opts_knit$set(self.contained=FALSE)
+set.seed(1)
+require(methods)
+@
+
+
+\setlength{\topsep}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\partopsep}{1pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title[Object oriented programming with R (S3 classes)]{Object oriented programming with R (S3 classes)}
+
+\author[]{
+  \textbf{\large Dr Colin Gillespie}\\
+  $\phantom{a}$\\
+  $\phantom{a}$\\
+  \textbf{School of Mathematics \& Statistics}
+}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{frame}[fragile]
+  \frametitle{Example 1: The \cc{plot} function}
+
+<<tidy=FALSE>>=
+x = rnorm(10); y = rnorm(10)
+m = lm(y ~ x)
+@ 
+\pause
+\begin{columns}
+\column{0.45\textwidth}
+
+<<dev='pdf', out.width='0.85\\textwidth'>>=
+plot(x, y)
+@ 
+\pause
+\column{0.45\textwidth} 
+<<dev='pdf', out.width='0.85\\textwidth', echo=1, fig.keep="last">>=
+plot(m)
+plot(m, which=1)
+@ 
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example 2: The \cc{summary} function} 
+  
+<<>>=
+summary(x)
+@ 
+\pause
+
+<<>>=
+summary(m)
+@ 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{OOP overview}
+  
+\begin{block}{Example: a simplified coda class}  
+\begin{itemize}
+\item Parallel runs of the same chain
+\item Different seeds and starting values
+\item Same number of iterations in each chain
+\end{itemize}
+\end{block}
+
+\pause
+\begin{itemize}
+\item We could create a single object that contains all chains
+  \begin{itemize}
+  \item A \textit{class} is the formal definition of an object
+  \item When we create an individual object, we call this an \textit{instance}
+  \item If a function operates on specific classes, this is called a method
+  \end{itemize}
+\item A user doesn't need to know how we've implemented the class - \textit{encapsulation}
+\item A method can operate on multiple classes, e.g. \cc{plot} - \textit{polymorphism}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Overview of R's OOP}
+\begin{itemize}
+\item The easiest and oldest system is the S3 class (generic-function OOP)
+  \begin{itemize}
+  \item This type of OO is different to message-passing style of Java and C++
+  \item In a message-passing framework, messages/methods are sent to objects and
+    the object determines which function to call - \cc{normal.rand(1)}
+  \item In S3, the generic function decides which method to call - it has the
+    form \cc{rand(normal, 1)}
+  \end{itemize}\pause 
+\item The S4 system is a formal version of S3. The largest difference is that S4
+  system has formal class definitions
+  \begin{itemize}
+  \item Bioconductor packages use S4 classes
+  \end{itemize}
+  \pause
+\item Reference classes are different to S3 and S4. Reference classes use
+  message passing and also have mutable states
+  \begin{itemize}
+  \item Reference classes are just S4 objects with a fancy environment
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{S3 classes}
+
+\begin{itemize}
+\item S3 classes are informal and simple to construct
+\item An S3 class, is just an object attribute
+
+<<>>=
+x = 5
+class(x)
+@ 
+\pause 
+\item We can also change/alter an object's class
+
+<<>>=
+## Multiple classes
+class(x) = c("numeric", "myclass")
+class(x)
+@
+\item R \alert{does not} perform any sort of type checking.
+\end{itemize}
+\end{frame}
+
+<<echo=FALSE, message=FALSE>>=
+library(coda)
+data(line)
+chain1 = line[[1]]
+attributes(chain1) = NULL
+dim(chain1) = c( 200, 3)
+colnames(chain1) = c("alpha", "beta", "sigma")
+
+chain2 = line[[2]]
+attributes(chain2) = NULL
+dim(chain2) = c( 200, 3)
+colnames(chain2) = c("alpha", "beta", "sigma")
+@ 
+
+\begin{frame}[fragile]
+\frametitle{Example: MCMC chains}
+
+\begin{itemize}
+\item Sample MCMC output from a simple linear regression model given in
+     the BUGS manual 
+     
+<<>>=
+head(chain1, 2)
+@      
+\pause     
+\item Store each chain as an element of a list
+<<>>=
+chains = list(2)
+chains[[1]] = chain1
+chains[[2]] = chain2
+@ 
+\pause
+\item Update the class
+
+<<>>=
+class(chains) = "mymcmc"
+@ 
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Overloading existing generic methods}
+
+\begin{enumerate}
+\item To determine if an existing function is a generic, use the \cc{methods}
+function:
+
+<<>>=
+methods("t")
+@ 
+\pause 
+\item To overload an existing generic function, we just create a function with name
+  \cc{generic.class}
+\item We should match the arguments of the existing generic
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Example: adding a plot method}
+\pause
+\begin{itemize}
+\item Check the arguments of \cc{plot}
+
+<<>>=
+args(plot)
+@ 
+\pause
+\item Create a method for \cc{mymcmc} objects
+
+<<tidy=FALSE>>=
+plot.mymcmc  = function(x, y, ...) {
+  n_chains = length(x); n_pars = ncol(x[[1]])
+  par(mfrow = c(n_chains, n_pars))
+  for(i in 1:n_chains) {
+    for(j in 1:n_pars) {
+      plot(x[[i]][, j], ...)
+    }
+  }
+}
+@ 
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: adding a plot method}
+  
+<<dev='pdf', out.width='0.6\\textwidth', fig.keep="last">>=
+plot(chains, type="l", xlab="Iteration")
+@ 
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Creating generics from scratch: step 1}
+
+\pause  
+Create a base generic
+
+<<>>=
+sd = function(x, na.rm = FALSE, ...) UseMethod("sd")
+@ 
+
+The \cc{UseMethod()} function takes two arguments.
+\begin{enumerate}
+\item The generic function name - in the above example this would be \cc{sd}
+\item The argument to use for method dispatch. If the second argument is
+  omitted, the default is the first argument of the enclosing function. In this
+  example, it would be \cc{class(x)}.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Creating generics from scratch: step 2}
+
+Create a \cc{default} method - \cc{generic.default}
+
+<<tidy=FALSE>>=
+sd.default = function(x, na.rm = FALSE, ...) 
+  stats::sd(x, na.rm=na.rm)
+@ 
+  
+This is an optional step, but usually a good idea.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Creating generics from scratch: step 3}
+
+Create a class method
+  
+<<tidy=FALSE>>=
+sd.mymcmc = function(x, na.rm = FALSE, ...)
+  lapply(x, apply, 2, function(i) sd(i, na.rm=na.rm, ...))
+@ 
+
+\pause  
+<<>>=
+sd(chains)
+@ 
+\end{frame}
+
+\begin{frame}
+  \frametitle{A few bits and pieces}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Finding methods}
+
+ To find S3 methods associated with a particular function -- use
+the \cc{methods} function:
+
+<<>>=
+methods("plot")
+@ 
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Finding methods}
+  
+  If we wanted to show methods for a particular class, then we specify
+the class of interest
+<<>>=
+methods(class = "mymcmc")
+@ 
+
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Function definitions}
+
+If we type the function name
+<<>>=
+plot
+@ 
+
+we just get the generic definition. \pause To view a particular function definition use \cc{getS3method}
+
+<<>>=
+getS3method("plot", "mymcmc")
+@ 
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Avoid using \cc{.} in variable names}
+  
+Unfortunately a number of functions use \cc{.} as a variable/function name. For
+example, 
+\begin{itemize}
+\item There isn't a \cc{csv} class - \cc{read.csv} 
+\end{itemize}
+\pause
+Even more confusing is the \cc{t.test} function\pause 
+
+<<>>=
+z = t.test(rnorm(y))
+class(z)
+@ 
+
+\noindent \textbf{Common sense:} don't use \cc{.} in variable names
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{NextMethod}
+  
+It is typical for a method function to make a few changes to its arguments and
+dispatch to the next method. In this scenario, use \cc{NextMethod}
+
+<<>>=
+t.data.frame = function(x) {
+    x = as.matrix(x)
+    NextMethod("t")
+}
+@  
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Inherent classes}
+  
+ Unfortunately the whole class system in R is a bit of mess. For example,
+ suppose we create a single element vector
+ 
+<<>>=
+x = "animal"
+@ 
+
+\noindent and investigate it's class
+
+<<>>=
+class(x)
+@ 
+\pause
+<<>>=
+is(x, "character")
+@ 
+\pause
+<<>>=
+is.character(x)
+@ 
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Inherent classes}
+  
+\noindent Let's change the class
+
+<<>>=
+class(x) = "animal"
+@ 
+\pause
+<<>>=
+is(x, "character")
+@ 
+\pause
+<<>>=
+is.character(x)
+@ 
+  
+\end{frame}  
+
+  
+
+
+
+
+\begin{frame}[fragile]
+  \frametitle{Remember, everything is function}
+  
+<<>>=
+'+' = function(e1, e2) e1 - e2
+@ 
+
+<<>>=
+3 + 2
+@ 
+
+\bigskip
+\bigskip
+
+\begin{center}
+{\LARGE Any questions?}
+\end{center}
+
+\end{frame}
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
