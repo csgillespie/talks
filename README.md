@@ -11,3 +11,8 @@ Talks and seminars
  * Stochastic simulation of chemically reacting systems using multi-core CPUs ([repo](https://github.com/csgillespie/talks/tree/master/multi-core), 
  [slides](http://www.mas.ncl.ac.uk/~ncsg3/html5talks/multicore))
 
+
+### R
+
+  * Object oriented programming with R (S3 classes) ([repo](https://github.com/csgillespie/talks/tree/master/s3-classes), 
+ [slides](https://github.com/csgillespie/talks/blob/master/s3-classes/talk.pdf?raw=true))
