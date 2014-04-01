@@ -5,7 +5,8 @@ Talks and seminars
 
 ### Inference
 
- * Bayesian experimental design ([repo](https://github.com/csgillespie/talks/tree/master/exp-design))
+ * Bayesian experimental design
+   ([repo](https://github.com/csgillespie/talks/tree/master/exp-design), [slide](http://www.slideshare.net/csgillespie/gillespie-33005092))
 
 ### Stochastic simulation
 
