@@ -5,7 +5,7 @@ Talks and seminars
 
 ### Inference
 
- * Bayesian experimental design
+ * Bayesian Experimental Design for Stochastic Kinetic Models
    ([repo](https://github.com/csgillespie/talks/tree/master/exp-design), [slide](http://www.slideshare.net/csgillespie/gillespie-33005092))
 
 ### Stochastic simulation
