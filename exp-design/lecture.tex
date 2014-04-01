@@ -217,8 +217,9 @@ which does not depend on $\btheta$
 \begin{itemize}
 \item The utility of a design $\bd = (t_1, t_2, \ldots, t_k)$ is
 \begin{align*}
-u(\bd)&=E_{\btheta,\by}\left[u(\bd,\by)\right] = \cdots 
-%&=\int_{\btheta} \pi(\btheta) \left\{ \int_{\by} u(\bd,\by) \pi(\by | \bd,\btheta) d \by \right\} d \btheta \\
+u(\bd)&=E_{\btheta,\by}\left[u(\bd,\by,\btheta)\right] = \cdots 
+%u(\bd)&=E_{\btheta,\by}\left[u(\bd,\by,\btheta)\right] = \cdots 
+%&=\int_{\btheta} \pi(\btheta) \left\{ \int_{\by} u(\bd,\by,\btheta) \pi(\by | \bd,\btheta) d \by \right\} d \btheta \\
 =\int_{\btheta} \pi(\btheta) u(\bd,\btheta) d \btheta \\
 \intertext{which can be approximated by}
 u(\bd) &= E_{\btheta}\left[u(\bd,\btheta)\right] \simeq \frac{1}{m}\sum_{i=1}^{m} u(\bd,\btheta_i)
